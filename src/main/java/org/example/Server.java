@@ -8,22 +8,51 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    public static void main(String[] args) throws IOException {
-        try(ServerSocket server = new ServerSocket(ServerConfig.PORT)) {
+    private static char lastChar;
 
+    public static void main(String[] args) {
+        try (ServerSocket server = new ServerSocket(ServerConfig.PORT);
+        ) {
             System.out.println("Сервер запущен");
+            String lastCity = "???";
 
-            while (true){
-                try(Socket client = server.accept();
-                    PrintWriter writer = new PrintWriter(client.getOutputStream(),true);
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()))){
+            while (true) {
+                try (Socket client = server.accept();
+                     PrintWriter writer = new PrintWriter(client.getOutputStream(), true);
+                     BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()))) {
 
                     System.out.println("Подключен клиент" + client.getPort());
 
-                    writer.println("Hi from server!");
-                    System.out.println(reader.readLine());
+                    final String name = reader.readLine();
+
+                    writer.println("Называет город: " + name + ", последний город: " + lastCity);
+
+                    String input = reader.readLine();
+                    char charIn = input.charAt(0);
+
+
+                    if (lastCity.equals("???") && !lastCity.equals(input)) {
+                        writer.println("OK");
+                        lastCity = input;
+                        lastChar = input.charAt(input.length() - 1);
+
+                    } else {
+                        if (lastChar == charIn){
+                            writer.println("OK");
+                            lastCity = input;
+                            lastChar = input.charAt(input.length() - 1);
+
+
+                        }else{writer.println("NOT OK");
+                        }
+
+                    }
+
                 }
             }
+        } catch (IOException e) {
+            System.out.println("Не могу стартовать сервер");
+            e.printStackTrace();
         }
     }
 }
