@@ -16,13 +16,12 @@ public class Server {
             System.out.println("Сервер запущен");
             String lastCity = "???";
 
-            while (true) {
-                try (Socket client = server.accept();
-                     PrintWriter writer = new PrintWriter(client.getOutputStream(), true);
-                     BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()))) {
+            try (Socket client = server.accept();
+                 PrintWriter writer = new PrintWriter(client.getOutputStream(), true);
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()))) {
 
-                    System.out.println("Подключен клиент" + client.getPort());
-
+                System.out.println("Подключен клиент" + client.getPort());
+                while (true) {
                     final String name = reader.readLine();
 
                     writer.println("Называет город: " + name + ", последний город: " + lastCity);
@@ -37,13 +36,14 @@ public class Server {
                         lastChar = input.charAt(input.length() - 1);
 
                     } else {
-                        if (lastChar == charIn){
+                        if (lastChar == charIn) {
                             writer.println("OK");
                             lastCity = input;
                             lastChar = input.charAt(input.length() - 1);
 
 
-                        }else{writer.println("NOT OK");
+                        } else {
+                            writer.println("NOT OK");
                         }
 
                     }
